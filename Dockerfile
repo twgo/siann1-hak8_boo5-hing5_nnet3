@@ -29,6 +29,16 @@ ENV KALDI_S5C /usr/local/kaldi/egs/taiwanese/s5c
 
 RUN mkdir -p $KALDI_S5C
 WORKDIR $KALDI_S5C
+COPY --from=siann /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
 COPY --from=siann $KALDI_S5C/data $KALDI_S5C/data
 COPY --from=siann $KALDI_S5C/exp $KALDI_S5C/exp
 COPY --from=siann $KALDI_S5C/local $KALDI_S5C/local
+COPY --from=siann $KALDI_S5C/cmd.sh $KALDI_S5C
+COPY --from=siann $KALDI_S5C/path.sh $KALDI_S5C
+RUN ln -s ../../wsj/s5/steps steps
+RUN ln -s ../../wsj/s5/utils utils
+RUN apt-get install -y sox
+COPY --from=siann $KALDI_S5C/conf $KALDI_S5C/conf
+RUN sed 's/8000/16000/g' -i conf/mfcc_hires.conf
+COPY run_ivector_common.sh run_ivector_common.sh
+RUN bash -x run_ivector_common.sh

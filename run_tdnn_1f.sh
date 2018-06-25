@@ -29,10 +29,10 @@ set -e -o pipefail
 # First the options that are passed through to run_ivector_common.sh
 # (some of which are also used in this script directly).
 stage=0
-nj=30
-train_set=train_si284
-test_sets="test_dev93 test_eval92"
-gmm=tri4b        # this is the source gmm-dir that we'll use for alignments; it
+nj=4
+train_set=train
+test_sets="train_dev"
+gmm=tri4        # this is the source gmm-dir that we'll use for alignments; it
                  # should have alignments for the specified training data.
 num_threads_ubm=32
 nnet3_affix=       # affix for exp dirs, e.g. it was _cleaned in tedlium.
@@ -85,7 +85,7 @@ local/nnet3/run_ivector_common.sh \
 
 
 gmm_dir=exp/${gmm}
-ali_dir=exp/${gmm}_ali_${train_set}_sp
+ali_dir=exp/${gmm}_ali
 lat_dir=exp/chain${nnet3_affix}/${gmm}_${train_set}_sp_lats
 dir=exp/chain${nnet3_affix}/tdnn${affix}_sp
 train_data_dir=data/${train_set}_sp_hires
