@@ -38,7 +38,12 @@ COPY --from=siann $KALDI_S5C/path.sh $KALDI_S5C
 RUN ln -s ../../wsj/s5/steps steps
 RUN ln -s ../../wsj/s5/utils utils
 RUN apt-get install -y sox
-COPY --from=siann $KALDI_S5C/conf $KALDI_S5C/conf
-RUN sed 's/8000/16000/g' -i conf/mfcc_hires.conf
+#COPY --from=siann $KALDI_S5C/conf $KALDI_S5C/conf
+#RUN sed 's/8000/16000/g' -i conf/mfcc_hires.conf
+RUN mkdir conf
+RUN cp ../../wsj/s5/conf/mfcc_hires.conf conf/
+RUN cp ../../wsj/s5/conf/online_cmvn.conf conf/
 COPY run_ivector_common.sh run_ivector_common.sh
 RUN bash -x run_ivector_common.sh
+COPY run_tdnn_1f.sh run_tdnn_1f.sh
+RUN bash -x run_tdnn_1f.sh

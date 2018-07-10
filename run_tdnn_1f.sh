@@ -34,7 +34,7 @@ train_set=train
 test_sets="train_dev"
 gmm=tri4        # this is the source gmm-dir that we'll use for alignments; it
                  # should have alignments for the specified training data.
-num_threads_ubm=32
+num_threads_ubm=4
 nnet3_affix=       # affix for exp dirs, e.g. it was _cleaned in tedlium.
 
 # Options which are not passed through to run_ivector_common.sh
@@ -76,11 +76,11 @@ where "nvcc" is installed.
 EOF
 fi
 
-local/nnet3/run_ivector_common.sh \
-  --stage $stage --nj $nj \
-  --train-set $train_set --gmm $gmm \
-  --num-threads-ubm $num_threads_ubm \
-  --nnet3-affix "$nnet3_affix"
+#./run_ivector_common.sh \
+#  --stage $stage --nj $nj \
+#  --train-set $train_set --gmm $gmm \
+#  --num-threads-ubm $num_threads_ubm \
+#  --nnet3-affix "$nnet3_affix"
 
 
 
@@ -122,7 +122,7 @@ if [ $stage -le 12 ]; then
       exit 1;
     fi
   else
-    cp -r data/lang $lang
+    cp -r data/lang_train $lang
     silphonelist=$(cat $lang/phones/silence.csl) || exit 1;
     nonsilphonelist=$(cat $lang/phones/nonsilence.csl) || exit 1;
     # Use our special topology... note that later on may have to tune this
@@ -134,8 +134,8 @@ fi
 if [ $stage -le 13 ]; then
   # Get the alignments as lattices (gives the chain training more freedom).
   # use the same num-jobs as the alignments
-  steps/align_fmllr_lats.sh --nj 100 --cmd "$train_cmd" ${lores_train_data_dir} \
-    data/lang $gmm_dir $lat_dir
+  steps/align_fmllr_lats.sh --nj 4 --cmd "$train_cmd" ${lores_train_data_dir} \
+    data/lang_train $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
 
@@ -239,7 +239,7 @@ if [ $stage -le 16 ]; then
     --egs.dir="$common_egs_dir" \
     --egs.opts="--frames-overlap-per-eg 0" \
     --cleanup.remove-egs=$remove_egs \
-    --use-gpu=true \
+    --use-gpu=wait \
     --reporting.email="$reporting_email" \
     --feat-dir=$train_data_dir \
     --tree-dir=$tree_dir \
