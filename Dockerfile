@@ -1,4 +1,5 @@
-FROM nvidia/cuda:9.1-devel-ubuntu16.04
+ARG KUI
+FROM nvidia/cuda:9.1-devel-ubuntu16.04 as kaldi
 
 MAINTAINER sih4sing5hong5
 
@@ -30,10 +31,16 @@ ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
 
 RUN mkdir -p $KALDI_S5C
 WORKDIR $KALDI_S5C
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:195 /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
+
+
+FROM dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} as tsuliau
+
+FROM kaldi
+COPY --from=tsuliau $SIANN_KALDI_S5C/data $KALDI_S5C/data
+COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
 ENV SIANN_KALDI_S5C /usr/local/kaldi/egs/taiwanese/s5c
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:195 $SIANN_KALDI_S5C/data $KALDI_S5C/data
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:195 $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
+COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/data $KALDI_S5C/data
+COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
 #RUN ln -s ../../wsj/s5/steps steps
 #RUN ln -s ../../wsj/s5/utils utils
 RUN apt-get install -y sox
@@ -46,17 +53,12 @@ ENV LANG en_US.UTF-8
 
 RUN mkdir -p /usr/local/gi2_liau7_khoo3
 RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
-#RUN sed -i 's/-G \/usr/-G \"\/usr/g' data/train/wav.scp
-#RUN sed -i 's/wav -b/wav\" -b/g' data/train/wav.scp
-#RUN sed -i 's/\&/_/g' data/train/wav.scp
-#RUN ln -s "/usr/local/pian7sik4_gi2liau7/twisas/音檔/ALen\&Tea" /usr/local/pian7sik4_gi2liau7/twisas/音檔/ALen_Tea
 
 RUN ln -s lang_train data/lang
 
 COPY run.sh .
 RUN bash -x run.sh --num_jobs 4
 
-# RUN sed 's/local\/nnet3\/run_ivector_common.sh/bash -x local\/nnet3\/run_ivector_common.sh/g' -i local/chain/tuning/run_tdnn_1a.sh
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
 
 RUN ln -s train data/train_sp
