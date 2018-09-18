@@ -1,9 +1,9 @@
 ARG KUI
+ARG CPU_CORE
 FROM nvidia/cuda:9.1-devel-ubuntu16.04 as kaldi
 
 MAINTAINER sih4sing5hong5
 
-ENV CPU_CORE 4
 
 RUN \
   apt-get update -qq && \

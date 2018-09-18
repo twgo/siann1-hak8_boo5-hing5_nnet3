@@ -2,5 +2,5 @@
 
 ### 走
 ```
-docker build .
+time docker build --build-arg KUI=200 --build-arg CPU_CORE=32 .
 ```
