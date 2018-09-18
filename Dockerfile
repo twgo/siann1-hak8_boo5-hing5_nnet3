@@ -11,7 +11,8 @@ RUN \
     git bzip2 wget \
     g++ make python python3 \
     zlib1g-dev automake autoconf libtool subversion \
-    libatlas-base-dev
+    libatlas-base-dev \
+    sox vim
 
 
 WORKDIR /usr/local/
@@ -22,10 +23,10 @@ RUN git clone https://github.com/yfliao/kaldi.git
 
 WORKDIR /usr/local/kaldi/tools
 RUN extras/check_dependencies.sh
-RUN make -j $CPU_CORE
+RUN make -j ${CPU_CORE:4}
 
 WORKDIR /usr/local/kaldi/src
-RUN ./configure && make depend -j $CPU_CORE && make -j $CPU_CORE
+RUN ./configure && make depend -j ${CPU_CORE:4} && make -j ${CPU_CORE:4}
 
 ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
 
@@ -41,10 +42,6 @@ COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} /usr/local
 ENV SIANN_KALDI_S5C /usr/local/kaldi/egs/taiwanese/s5c
 COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/data $KALDI_S5C/data
 COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
-#RUN ln -s ../../wsj/s5/steps steps
-#RUN ln -s ../../wsj/s5/utils utils
-RUN apt-get install -y sox
-RUN apt-get install -y vim
 
 RUN mkdir -p $SIANN_KALDI_S5C/
 RUN ln -s $KALDI_S5C/data $SIANN_KALDI_S5C/data
@@ -57,7 +54,7 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 RUN ln -s lang_train data/lang
 
 COPY run.sh .
-RUN bash -x run.sh --num_jobs 4
+RUN bash -x run.sh --num_jobs ${CPU_CORE:4}
 
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
 
