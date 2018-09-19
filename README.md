@@ -2,7 +2,7 @@
 
 ### 走
 ```
-docker build .
+time docker build --build-arg KUI=200 --build-arg CPU_CORE=32 .
 ```
 ```
 time docker run --runtime=nvidia --name nnet3-twisas-tw12-8k nnet3:twisas-tw12 
