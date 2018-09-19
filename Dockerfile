@@ -53,6 +53,7 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 
 RUN ln -s lang_train data/lang
 
+ARG CPU_CORE
 COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
