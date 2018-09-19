@@ -36,11 +36,12 @@ WORKDIR $KALDI_S5C
 FROM dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} as tsuliau
 
 FROM kaldi
-COPY --from=tsuliau $SIANN_KALDI_S5C/data $KALDI_S5C/data
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
+ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
 ENV SIANN_KALDI_S5C /usr/local/kaldi/egs/taiwanese/s5c
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/data $KALDI_S5C/data
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
+
+COPY --from=tsuliau /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
+COPY --from=tsuliau $SIANN_KALDI_S5C/data $KALDI_S5C/data
+COPY --from=tsuliau $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
 #RUN ln -s ../../wsj/s5/steps steps
 #RUN ln -s ../../wsj/s5/utils utils
 RUN apt-get install -y sox
@@ -56,8 +57,12 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 
 RUN ln -s lang_train data/lang
 
+RUN echo '--allow_downsample=true' >> conf/mfcc.conf
+RUN echo '--allow_downsample=true' >> conf/mfcc_pitch.conf
+RUN echo '--allow_downsample=true' >> conf/mfcc_hires.conf
+RUN echo 's/16000/8000/g' -i conf/*.conf
 COPY run.sh .
-RUN bash -x run.sh --num_jobs 4
+RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
 

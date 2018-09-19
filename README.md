@@ -4,3 +4,6 @@
 ```
 docker build .
 ```
+```
+time docker run --runtime=nvidia --name nnet3-twisas-tw12-8k nnet3:twisas-tw12 
+```
