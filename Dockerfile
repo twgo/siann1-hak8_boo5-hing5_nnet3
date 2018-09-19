@@ -1,5 +1,5 @@
-ARG KUI
-ARG CPU_CORE
+ARG CPU_CORE=4
+ARG KUI=200
 FROM nvidia/cuda:9.1-devel-ubuntu16.04 as kaldi
 
 MAINTAINER sih4sing5hong5
@@ -21,27 +21,27 @@ WORKDIR /usr/local/
 RUN git clone https://github.com/yfliao/kaldi.git
 
 
+ARG CPU_CORE
 WORKDIR /usr/local/kaldi/tools
 RUN extras/check_dependencies.sh
-RUN make -j ${CPU_CORE:4}
+RUN make -j ${CPU_CORE}
 
 WORKDIR /usr/local/kaldi/src
-RUN ./configure && make depend -j ${CPU_CORE:4} && make -j ${CPU_CORE:4}
-
-ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
-
-RUN mkdir -p $KALDI_S5C
-WORKDIR $KALDI_S5C
+RUN ./configure && make depend -j ${CPU_CORE} && make -j ${CPU_CORE}
 
 
 FROM dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} as tsuliau
 
 FROM kaldi
-COPY --from=tsuliau $SIANN_KALDI_S5C/data $KALDI_S5C/data
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
+
 ENV SIANN_KALDI_S5C /usr/local/kaldi/egs/taiwanese/s5c
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/data $KALDI_S5C/data
-COPY --from=dockerhub.iis.sinica.edu.tw/siann1-hak8_boo5-hing5:${KUI} $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
+ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
+RUN mkdir -p $KALDI_S5C
+WORKDIR $KALDI_S5C
+
+COPY --from=tsuliau /usr/local/pian7sik4_gi2liau7/ /usr/local/pian7sik4_gi2liau7/
+COPY --from=tsuliau $SIANN_KALDI_S5C/data $KALDI_S5C/data
+COPY --from=tsuliau $SIANN_KALDI_S5C/cmd.sh $KALDI_S5C
 
 RUN mkdir -p $SIANN_KALDI_S5C/
 RUN ln -s $KALDI_S5C/data $SIANN_KALDI_S5C/data
@@ -54,7 +54,7 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 RUN ln -s lang_train data/lang
 
 COPY run.sh .
-RUN bash -x run.sh --num_jobs ${CPU_CORE:4}
+RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
 
