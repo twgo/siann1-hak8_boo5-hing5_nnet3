@@ -18,7 +18,12 @@ WORKDIR /usr/local/
 # Use the newest kaldi version
 #RUN git clone https://github.com/kaldi-asr/kaldi.git
 RUN git clone https://github.com/yfliao/kaldi.git
-
+WORKDIR /usr/local/kaldi/
+RUN git remote add kaldi https://github.com/kaldi-asr/kaldi.git
+RUN git fetch kaldi
+RUN git config --global user.name "fafoy" && \
+  git config --global user.email fafoy@example.com
+RUN git merge kaldi/master
 
 ARG CPU_CORE
 WORKDIR /usr/local/kaldi/tools
