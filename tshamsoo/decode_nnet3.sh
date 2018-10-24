@@ -60,24 +60,15 @@ mkdir -p $decode_dir/scoring/
   # cat $decode_dir/a.log | grep ^0 > $decode_dir/scoring/7.0.0.txt
 )
 
-lattice-lmrescore --lm-scale=-1.0 \
-  "ark:gunzip -c $decode_dir/lat1.1.gz|" \
-  "fstproject --project_output=true $lang_dir/G.fst |" \
-  ark:- | \
-  lattice-lmrescore-const-arpa --lm-scale=1.0 \
-     ark:- \
-     $lang_dir/G.carpa \
-     "ark,t:|gzip -c> $decode_dir/lat3.1.gz"
+#lattice-lmrescore --lm-scale=-1.0 \
+#  "ark:gunzip -c $decode_dir/lat1.1.gz|" \
+#  "fstproject --project_output=true $lang_dir/G.fst |" \
+#  ark:- | \
+#  lattice-lmrescore-const-arpa --lm-scale=1.0 \
+#     ark:- \
+#     $lang_dir/G.carpa \
+#     "ark,t:|gzip -c> $decode_dir/lat3.1.gz"
 
-lattice-scale --inv-acoustic-scale=13 "ark:gunzip -c $decode_dir/lat3.1.gz|" ark:- | \
-        lattice-add-penalty --word-ins-penalty=0.0 ark:- ark:- | \
-        lattice-best-path --word-symbol-table=$graph_dir/words.txt ark:- ark,t:- | \
+lattice-best-path  --lm-scale=13 --word-symbol-table=$graph_dir/words.txt "ark:gunzip -c $decode_dir/lat1.1.gz|" ark,t:- | \
         utils/int2sym.pl -f 2- $graph_dir/words.txt | \
         tee $decode_dir/scoring/7.0.0.txt
-# lattice-best-path --word-symbol-table=$graph_dir/words.txt \
-#   "ark:gunzip -c $decode_dir/lat3.1.gz|" ark,t:- \
-#   | utils/int2sym.pl -f 2- $graph_dir/words.txt \
-#   | tee $decode_dir/scoring/7.0.0.txt
-
-# cp $decode_dir/lat3.1.gz $decode_dir/lat.1.gz
-# steps/score_kaldi.sh ${tshi3} $graph_dir $decode_dir
