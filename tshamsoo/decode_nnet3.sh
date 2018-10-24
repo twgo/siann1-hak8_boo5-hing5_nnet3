@@ -14,6 +14,7 @@ tshi3=$3
 (
   utils/utt2spk_to_spk2utt.pl $tshi3/utt2spk > $tshi3/spk2utt
 
+  sed 's/-r 16k/-r 8k/g' -i ${tshi3}/wav.scp
   utils/fix_data_dir.sh ${tshi3}
 
   mfccdir=${tshi3}/mfcc
