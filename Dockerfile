@@ -38,12 +38,4 @@ ENV KALDI_S5C /usr/local/kaldi/egs/formosa/s5
 WORKDIR $KALDI_S5C
 
 
-COPY liau/conf conf
-COPY liau/exp exp
-
-#ARG CPU_CORE
-#RUN sed 's/16000/8000/g' -i conf/*.conf
-#RUN sed 's/-r 16k/-r 8k/g' -i data/*/wav.scp
-#CMD bash -x run.sh --num_jobs ${CPU_CORE}
-
 
