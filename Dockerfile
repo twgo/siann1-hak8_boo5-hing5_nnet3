@@ -60,6 +60,7 @@ COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
 RUN sed -i '145,149d' local/nnet3/run_ivector_common.sh
+RUN sed 's/low-freq=40/low-freq=20/g' -i conf/mfcc_hires.conf
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
 
 RUN ln -s train data/train_sp
