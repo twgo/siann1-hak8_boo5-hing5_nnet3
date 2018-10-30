@@ -38,8 +38,11 @@ RUN sed 's/-le/-eq/g' local/chain/run_tdnn.sh -i
 RUN bash -x local/chain/run_tdnn.sh --stage 7
 RUN bash -x local/chain/run_tdnn.sh --stage 8
 RUN bash -x local/chain/run_tdnn.sh --stage 9
-RUN bash -x local/chain/run_tdnn.sh --stage 10
-CMD bash -x local/chain/run_tdnn.sh --stage 11
+
+RUN wget -O local/chain/run_tdnnf.sh https://github.com/sih4sing5hong5/kaldi/raw/taiwanese-liau-tdnnf/egs/taiwanese/s5c/liau_run_tdnn.sh # 20181029-1921
+RUN sed -i 's/-le/-eq/g' local/chain/run_tdnnf.sh
+RUN bash -x local/chain/run_tdnnf.sh --stage 10
+CMD bash -x local/chain/run_tdnnf.sh --stage 11
 
 #RUN sed 's/in test/in train_dev/g' local/chain/run_tdnn.sh -i
 #RUN bash -x local/chain/run_tdnn.sh --stage 12
