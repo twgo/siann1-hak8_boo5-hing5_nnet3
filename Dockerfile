@@ -30,11 +30,12 @@ ARG CPU_CORE
 COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
-RUN sed -i '145,149d' local/nnet3/run_ivector_common.sh
-RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
+COPY ivector_diff .
+RUN git apply ivector_diff
+RUN bash -x local/nnet3/run_ivector_common.sh
 
 RUN ln -s train data/train_sp
-RUN sed 's/-le/-eq/g' local/chain/run_tdnn.sh -i
+RUN sed 's/ -le / -eq /g' local/chain/run_tdnn.sh -i
 RUN bash -x local/chain/run_tdnn.sh --stage 7
 RUN bash -x local/chain/run_tdnn.sh --stage 8
 RUN bash -x local/chain/run_tdnn.sh --stage 9
