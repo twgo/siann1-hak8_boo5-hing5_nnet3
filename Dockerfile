@@ -27,6 +27,8 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 RUN ln -s lang_train data/lang
 
 ARG CPU_CORE
+RUN sed 's/16000/8000/g' -i conf/*.conf
+RUN sed 's/-r 16k/-r 8k/g' -i data/*/wav.scp
 COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
