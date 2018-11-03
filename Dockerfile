@@ -34,10 +34,10 @@ COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /home/johndoe/git/Ko-Ming-Tat
 COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /s5c-demo /s5c
 
 COPY 2017nithau.sh .
-RUN bash 2017nithau.sh --stage -1
-RUN bash 2017nithau.sh --stage 2
-#RUN bash 2017nithau.sh --stage 5
-RUN bash 2017nithau.sh --stage 16
+RUN bash -x 2017nithau.sh --stage -1
+RUN bash -x 2017nithau.sh --stage 2
+#RUN bash -x 2017nithau.sh --stage 5
+RUN bash -x 2017nithau.sh --stage 16
 RUN rm data/lang
 RUN ln -s lang_2017 data/lang
 

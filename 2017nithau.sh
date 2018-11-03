@@ -40,6 +40,9 @@ if [ $stage -eq 2 ]; then
   mkdir -p data/tmp
   cp -r  data/local/dict  data/local/dict_2017 
   rm -f data/local/dict_2017/l*
+  sed 's/\([^-｜]\)0/\13/g' -i /s5c/data/local/dict/lexicon.txt
+  sed '/\([^-｜]\)6/d' -i /s5c/data/local/dict/lexicon.txt
+  sed '/uⁿ8/d' -i /s5c/data/local/dict/lexicon.txt
   cat data/local/dict/lexicon.txt /s5c/data/local/dict/lexicon.txt |sort -u> data/local/dict_2017/lexicon.txt
   utils/prepare_lang.sh data/local/dict_2017 "<UNK>"  data/tmp/lang_2017 data/lang_2017
 
@@ -55,7 +58,7 @@ if [ $stage -eq 5 ]; then
 fi
 
 
-if [ $STAGE -le 16 ]; then
+if [ $stage -eq 16 ]; then
   steps/cleanup/clean_and_segment_data.sh \
     --nj $nj \
     $x data/lang_2017 exp/tri4 exp/tri4_2017_cleanup_log data/2017_cleaned
