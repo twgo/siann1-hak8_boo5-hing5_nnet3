@@ -30,6 +30,17 @@ ARG CPU_CORE
 COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
+COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /home/johndoe/git/Ko-Ming-Tat_2015_TAIWANESE-SPEECH-AND-TEXT-CORPUS/資料庫影音檔案 /home/johndoe/git/Ko-Ming-Tat_2015_TAIWANESE-SPEECH-AND-TEXT-CORPUS/資料庫影音檔案
+COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /s5c-demo /s5c
+
+COPY 2017nithau.sh .
+RUN bash 2017nithau.sh --stage -1
+RUN bash 2017nithau.sh --stage 2
+RUN bash 2017nithau.sh --stage 5
+RUN bash 2017nithau.sh --stage 16
+RUN rm data/lang
+RUN ln -s lang_2017 data/lang
+
 COPY ivector_diff .
 RUN git apply ivector_diff
 RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
