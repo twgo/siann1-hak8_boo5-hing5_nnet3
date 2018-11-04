@@ -24,7 +24,7 @@ x=/s5c/data/train_nodev
 mfccdir=mfcc
 
 # mfcc
-if [ $stage -le -1 ]; then
+if [ $stage -eq -1 ]; then
 
   echo "$0: making mfccs"
     utils/utt2spk_to_spk2utt.pl $x/utt2spk > $x/spk2utt
@@ -40,7 +40,7 @@ if [ $stage -eq 2 ]; then
   mkdir -p data/tmp
   cp -r  data/local/dict  data/local/dict_2017 
   rm -f data/local/dict_2017/l*
-  sed 's/\([^-｜]\)0/\13/g' -i /s5c/data/local/dict/lexicon.txt
+  sed 's/\([^-｜1]\)0/\13/g' -i /s5c/data/local/dict/lexicon.txt
   sed '/\([^-｜]\)6/d' -i /s5c/data/local/dict/lexicon.txt
   sed '/uⁿ8/d' -i /s5c/data/local/dict/lexicon.txt
   cat data/local/dict/lexicon.txt /s5c/data/local/dict/lexicon.txt |sort -u> data/local/dict_2017/lexicon.txt
@@ -52,7 +52,7 @@ if [ $stage -eq 5 ]; then
 
   # align tri5a
   steps/align_fmllr.sh --cmd "$train_cmd" --nj $num_jobs \
-    $x data/lang_2017 exp/tri5a exp/2017_ali || exit 1;
+    $x data/lang_2017 exp/tri5a exp/tri5_2017_ali || exit 1;
 
 
 fi
@@ -60,10 +60,10 @@ fi
 
 if [ $stage -eq 16 ]; then
   steps/cleanup/clean_and_segment_data.sh \
-    --nj $nj \
-    $x data/lang_2017 exp/tri4 exp/tri4_2017_cleanup_log data/2017_cleaned
+    --nj $num_jobs \
+    $x data/lang_2017 exp/tri5_2017_ali exp/tri5a_2017_cleanup_log data/2017_cleaned
   mv data/train data/train_guan
   utils/combine_data.sh data/train data/train_guan data/2017_cleaned
-  steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
+  steps/align_fmllr.sh --nj $num_jobs --cmd "$train_cmd" \
     data/train data/lang_2017 exp/tri5a exp/tri5a_ali
 fi
