@@ -36,6 +36,8 @@ COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /home/johndoe/git/Ko-Ming-Tat
 COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /s5c-demo /s5c
 
 RUN sed 's/-r 16k/-r 8k/g' -i /s5c/data/*/wav.scp
+RUN sed 's/tong0/TONG2017-0/g' -i /s5c/data/train_nodev/wav.scp /s5c/data/train_nodev/reco2file_and_channel
+RUN sed 's/ tong0/ TONG2017-0/g' -i /s5c/data/train_nodev/segments
 COPY 2017nithau.sh .
 RUN bash -x 2017nithau.sh --num_jobs ${CPU_CORE} --stage -1
 RUN bash -x 2017nithau.sh --num_jobs ${CPU_CORE} --stage 2
@@ -46,7 +48,7 @@ RUN ln -s lang_2017 data/lang
 
 COPY ivector_diff .
 RUN git apply ivector_diff
-RUN bash -x local/nnet3/run_ivector_common.sh --test_sets train_dev
+RUN bash -x local/nnet3/run_ivector_common.sh
 
 RUN ln -s train data/train_sp
 RUN sed 's/-le/-eq/g' local/chain/run_tdnn.sh -i
