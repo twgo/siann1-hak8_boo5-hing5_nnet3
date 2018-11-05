@@ -27,15 +27,12 @@ RUN ln -s /usr/local/pian7sik4_gi2liau7/twisas/音檔 /usr/local/gi2_liau7_khoo3
 RUN ln -s lang_train data/lang
 
 ARG CPU_CORE
-RUN sed 's/16000/8000/g' -i conf/*.conf
-RUN sed 's/-r 16k/-r 8k/g' -i data/*/wav.scp
 COPY run.sh .
 RUN bash -x run.sh --num_jobs ${CPU_CORE}
 
 COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /home/johndoe/git/Ko-Ming-Tat_2015_TAIWANESE-SPEECH-AND-TEXT-CORPUS/資料庫影音檔案 /home/johndoe/git/Ko-Ming-Tat_2015_TAIWANESE-SPEECH-AND-TEXT-CORPUS/資料庫影音檔案
 COPY --from=dockerhub.iis.sinica.edu.tw/2017nithau /s5c-demo /s5c
 
-RUN sed 's/-r 16k/-r 8k/g' -i /s5c/data/*/wav.scp
 RUN sed 's/tong0/TONG2017-0/g' -i /s5c/data/train_nodev/wav.scp /s5c/data/train_nodev/reco2file_and_channel
 RUN sed 's/ tong0/ TONG2017-0/g' -i /s5c/data/train_nodev/segments
 COPY 2017nithau.sh .
